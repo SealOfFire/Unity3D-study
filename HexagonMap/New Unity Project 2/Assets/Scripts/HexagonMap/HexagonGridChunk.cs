@@ -12,10 +12,6 @@ namespace HexagonMap
         public HexagonMesh terrain;
         private Canvas gridCanvas;
 
-        //private static Color color1 = new Color(1f, 0f, 0f);
-        //private static Color color2 = new Color(0f, 1f, 0f);
-        //private static Color color3 = new Color(0f, 0f, 1f);
-
         void Awake()
         {
             // hexMesh = GetComponentInChildren<HexagonMesh>();
@@ -91,17 +87,5 @@ namespace HexagonMap
             // this.terrain.Triangulate(cells);
             this.enabled = true;
         }
-
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <param name="direction"></param>
-        ///// <param name="cell"></param>
-        ///// <param name="center"></param>
-        ///// <param name="e"></param>
-        //private void TriangulateWithoutRiver(HexagonDirection direction, HexagonCell cell, Vector3 center, EdgeVertices e)
-        //{
-        //    TriangulateEdgeFan(center, e, color1);
-        //}
     }
 }

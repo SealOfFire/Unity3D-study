@@ -38,6 +38,9 @@ namespace HexagonMap
         [NonSerialized]
         private List<Vector2> uvs;
 
+        [NonSerialized]
+        private List<Vector3> terrainTypes;
+
         /// <summary>
         /// 用于点击的碰撞检测
         /// </summary>
@@ -57,6 +60,10 @@ namespace HexagonMap
         /// 是否使用纹理坐标
         /// </summary>
         public bool useUVCoordinates;
+
+        public bool useUV2Coordinates;
+
+        public bool useTerrainTypes;
 
         #endregion
 
@@ -236,6 +243,10 @@ namespace HexagonMap
             {
                 this.uvs = ListPool<Vector2>.Get();
             }
+            if (this.useTerrainTypes)
+            {
+                this.terrainTypes = ListPool<Vector3>.Get();
+            }
             this.triangles = ListPool<int>.Get();
         }
 
@@ -260,6 +271,11 @@ namespace HexagonMap
                 this.hexMesh.SetUVs(0, this.uvs);
                 ListPool<Vector2>.Add(this.uvs);
             }
+            if (useTerrainTypes)
+            {
+                this.hexMesh.SetUVs(2, terrainTypes);
+                ListPool<Vector3>.Add(terrainTypes);
+            }
             this.hexMesh.SetTriangles(triangles, 0);
             ListPool<int>.Add(this.triangles);
             this.hexMesh.RecalculateNormals();
@@ -273,25 +289,40 @@ namespace HexagonMap
 
         public void AddTriangleUV(Vector2 uv1, Vector2 uv2, Vector3 uv3)
         {
-            uvs.Add(uv1);
-            uvs.Add(uv2);
-            uvs.Add(uv3);
+            this.uvs.Add(uv1);
+            this.uvs.Add(uv2);
+            this.uvs.Add(uv3);
         }
 
         public void AddQuadUV(Vector2 uv1, Vector2 uv2, Vector3 uv3, Vector3 uv4)
         {
-            uvs.Add(uv1);
-            uvs.Add(uv2);
-            uvs.Add(uv3);
-            uvs.Add(uv4);
+            this.uvs.Add(uv1);
+            this.uvs.Add(uv2);
+            this.uvs.Add(uv3);
+            this.uvs.Add(uv4);
         }
 
         public void AddQuadUV(float uMin, float uMax, float vMin, float vMax)
         {
-            uvs.Add(new Vector2(uMin, vMin));
-            uvs.Add(new Vector2(uMax, vMin));
-            uvs.Add(new Vector2(uMin, vMax));
-            uvs.Add(new Vector2(uMax, vMax));
+            this.uvs.Add(new Vector2(uMin, vMin));
+            this.uvs.Add(new Vector2(uMax, vMin));
+            this.uvs.Add(new Vector2(uMin, vMax));
+            this.uvs.Add(new Vector2(uMax, vMax));
+        }
+
+        public void AddTriangleTerrainTypes(Vector3 types)
+        {
+            this.terrainTypes.Add(types);
+            this.terrainTypes.Add(types);
+            this.terrainTypes.Add(types);
+        }
+
+        public void AddQuadTerrainTypes(Vector3 types)
+        {
+            this.terrainTypes.Add(types);
+            this.terrainTypes.Add(types);
+            this.terrainTypes.Add(types);
+            this.terrainTypes.Add(types);
         }
         #endregion
 
