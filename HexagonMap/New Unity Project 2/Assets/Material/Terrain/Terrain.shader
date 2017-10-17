@@ -2,6 +2,7 @@
 	Properties{
 		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("Terrain Texture Array", 2DArray) = "white" {}
+		_GridTex("Grid Texture", 2D) = "white" {}
 		_Glossiness("Smoothness", Range(0,1)) = 0.5
 		_Metallic("Metallic", Range(0,1)) = 0.0
 	}
@@ -16,8 +17,11 @@
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.5
 
+		#pragma multi_compile _ GRID_ON
+
 		// sampler2D _MainTex;
 		UNITY_DECLARE_TEX2DARRAY(_MainTex);
+		sampler2D _GridTex;
 
 		half _Glossiness;
 		half _Metallic;
@@ -52,7 +56,16 @@
 			// Albedo comes from a texture tinted by color
 			// fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
 			fixed4 c = GetTerrainColor(IN, 0) + GetTerrainColor(IN, 1) + GetTerrainColor(IN, 2);
-			o.Albedo = c.rgb * IN.color;;
+
+			fixed4 grid = 1;
+			#if defined(GRID_ON)
+				float2 gridUV = IN.worldPos.xz;
+				gridUV.x *= 1 / (4 * 8.66025404);
+				gridUV.y *= 1 / (2 * 15.0);
+				grid = tex2D(_GridTex, gridUV);
+			#endif
+
+			o.Albedo = c.rgb * grid  * IN.color;;
 			// Metallic and smoothness come from slider variables
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;

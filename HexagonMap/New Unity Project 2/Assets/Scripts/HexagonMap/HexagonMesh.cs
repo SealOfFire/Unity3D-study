@@ -39,6 +39,9 @@ namespace HexagonMap
         private List<Vector2> uvs;
 
         [NonSerialized]
+        private List<Vector2> uv2s;
+
+        [NonSerialized]
         private List<Vector3> terrainTypes;
 
         /// <summary>
@@ -243,6 +246,10 @@ namespace HexagonMap
             {
                 this.uvs = ListPool<Vector2>.Get();
             }
+            if (useUV2Coordinates)
+            {
+                this.uv2s = ListPool<Vector2>.Get();
+            }
             if (this.useTerrainTypes)
             {
                 this.terrainTypes = ListPool<Vector3>.Get();
@@ -270,6 +277,11 @@ namespace HexagonMap
             {
                 this.hexMesh.SetUVs(0, this.uvs);
                 ListPool<Vector2>.Add(this.uvs);
+            }
+            if (useUV2Coordinates)
+            {
+                hexMesh.SetUVs(1, this.uv2s);
+                ListPool<Vector2>.Add(this.uv2s);
             }
             if (useTerrainTypes)
             {

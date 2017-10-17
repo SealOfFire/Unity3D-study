@@ -61,7 +61,7 @@ MonoBehaviour:
   chunkCountHeight: 3
   chunkPrefab: {fileID: 114477586240996870, guid: b5e90807df099bb48afbe7afcfaf0130,
     type: 2}
-  defaultColor: {r: 0.7607844, g: 0.7607844, b: 0.7607844, a: 1}
+  defaultColor: {r: 0.58823526, g: 0.58823526, b: 0.58823526, a: 1}
   touchedColor: {r: 1, g: 0, b: 1, a: 1}
   cellLabelPrefab: {fileID: 114285655496368756, guid: 56c147039b768c14e80b02f13933601d,
     type: 2}

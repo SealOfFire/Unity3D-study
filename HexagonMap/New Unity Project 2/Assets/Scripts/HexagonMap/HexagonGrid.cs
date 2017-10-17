@@ -173,11 +173,11 @@ namespace HexagonMap
         // Update is called once per frame
         private void Update()
         {
-            // 点击处理
-            if (Input.GetMouseButton(0))
-            {
-                this.HandleInput();
-            }
+            //// 点击处理
+            //if (Input.GetMouseButton(0))
+            //{
+            //    this.HandleInput();
+            //}
         }
 
         #endregion
@@ -309,30 +309,34 @@ namespace HexagonMap
 
         #region 处理点击
 
-        /// <summary>
-        /// 
-        /// </summary>
-        void HandleInput()
-        {
-            Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(inputRay, out hit))
-            {
-                TouchCell(hit.point);
-            }
-        }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="position"></param>
+        //void TouchCell(Vector3 position)
+        //{
+        //    // 点击的位置
+        //    position = transform.InverseTransformPoint(position);
+        //    // 点击的位置转换成网格坐标
+        //    HexagonCoordinates coordinates = HexagonCoordinates.FromPosition(position, this);
+        //    Debug.Log("touched at " + coordinates);
+        //}
 
         /// <summary>
-        /// 
+        /// 获取点击位置的单元格
         /// </summary>
         /// <param name="position"></param>
-        void TouchCell(Vector3 position)
+        /// <returns></returns>
+        public HexagonCell GetCell(Vector3 position)
         {
-            // 点击的位置
             position = transform.InverseTransformPoint(position);
-            // 点击的位置转换成网格坐标
             HexagonCoordinates coordinates = HexagonCoordinates.FromPosition(position, this);
-            Debug.Log("touched at " + coordinates);
+            // Debug.Log("touched at " + coordinates);
+            int index = coordinates.X + coordinates.Z * this.cellCountWidth + coordinates.Z / 2;
+            // Debug.Log(this.cells.Length);
+            Debug.Log("touched at " + coordinates + "index:" + index);
+            return this.cells[index];
+            // return null;
         }
 
         #endregion
@@ -364,6 +368,7 @@ namespace HexagonMap
                 //yield return delay;
                 //cells[i].Distance = cell.Coordinates.DistanceTo(cells[i].Coordinates);
                 cells[i].Distance = int.MaxValue;
+                cells[i].DisableHighlight();
             }
             WaitForSeconds delay = new WaitForSeconds(1 / 60f);
             // Queue<HexagonCell> frontier = new Queue<HexagonCell>();
