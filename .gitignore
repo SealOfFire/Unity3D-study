@@ -2,7 +2,8 @@ Library/
 Temp/
 HexagonMap/New Unity Project 2/Library/
 HexagonMap/New Unity Project 2/Temp/
-HexagonMap/New Unity Project 2/.vs
+HexagonMap/New Unity Project 2/.vs/
+HexagonMap/New Unity Project 2/obj/
 *.sln
 *.csproj
 *.sln
