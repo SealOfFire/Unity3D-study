@@ -7,7 +7,7 @@ namespace HexagonMap.UI
         public HexagonGrid hexagonGrid;
         public Material terrainMaterial;
         // private Color activeColor;
-        private HexagonCell searchToCell, searchFromCell;
+        private HexagonCell previousCell, searchToCell, searchFromCell;
 
         /// <summary>
         /// 显示网格边线
@@ -58,17 +58,24 @@ namespace HexagonMap.UI
                 // this.hexGrid.TouchCell(hit.point);
                 if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
                 {
-                    if (searchFromCell)
+                    // 清除旧的检索路径起点
+                    if (this.searchFromCell)
                     {
-                        searchFromCell.DisableHighlight();
+                        this.searchFromCell.DisableHighlight();
                     }
-                    searchFromCell = currentCell;
-                    searchFromCell.EnableHighlight(Color.blue);
+                    // 当前选中的单元格设置为新的检索起点
+                    this.searchFromCell = currentCell;
+                    this.searchFromCell.EnableHighlight(Color.blue);
                     if (searchToCell)
                     {
-                        // this.hexagonGrid.FindPath(searchFromCell, searchToCell);
+                        this.hexagonGrid.FindPath(this.searchFromCell, this.searchToCell);
                     }
                 }
+                else if (searchFromCell && searchFromCell != currentCell)
+                {
+                    this.hexagonGrid.FindPath(searchFromCell, currentCell);
+                }
+
             }
         }
     }

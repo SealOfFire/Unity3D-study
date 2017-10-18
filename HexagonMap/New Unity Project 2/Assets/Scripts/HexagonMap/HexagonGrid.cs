@@ -105,6 +105,11 @@ namespace HexagonMap
 
         public Text cellLabelPrefab;
 
+        /// <summary>
+        /// 路径检索优先级队列
+        /// </summary>
+        private HexagonCellPriorityQueue searchFrontier;
+
         #endregion
 
 
@@ -341,19 +346,30 @@ namespace HexagonMap
 
         #endregion
 
-        /// <summary>
-        /// 地图上每个单元格到指定单元格的距离
-        /// </summary>
-        /// <param name="cell"></param>
-        public void FindDistancesTo(HexagonCell cell)
-        {
-            this.StopAllCoroutines();
-            this.StartCoroutine(Search(cell));
+        ///// <summary>
+        ///// 地图上每个单元格到指定单元格的距离
+        ///// </summary>
+        ///// <param name="cell"></param>
+        //public void FindDistancesTo(HexagonCell cell)
+        //{
+        //    this.StopAllCoroutines();
+        //    this.StartCoroutine(Search(cell));
 
-            //for (int i = 0; i < cells.Length; i++)
-            //{
-            //    this.cells[i].Distance = cell.Coordinates.DistanceTo(cells[i].Coordinates);
-            //}
+        //    //for (int i = 0; i < cells.Length; i++)
+        //    //{
+        //    //    this.cells[i].Distance = cell.Coordinates.DistanceTo(cells[i].Coordinates);
+        //    //}
+        //}
+
+        /// <summary>
+        /// 查找两个单元格之间的路径
+        /// </summary>
+        /// <param name="fromCell"></param>
+        /// <param name="toCell"></param>
+        public void FindPath(HexagonCell fromCell, HexagonCell toCell)
+        {
+            StopAllCoroutines();
+            StartCoroutine(Search(fromCell, toCell));
         }
 
         /// <summary>
@@ -361,27 +377,54 @@ namespace HexagonMap
         /// </summary>
         /// <param name="cell"></param>
         /// <returns></returns>
-        private IEnumerator Search(HexagonCell cell)
+        private IEnumerator Search(HexagonCell fromCell, HexagonCell toCell)
         {
+            if (this.searchFrontier == null)
+            {
+                this.searchFrontier = new HexagonCellPriorityQueue();
+            }
+            else
+            {
+                this.searchFrontier.Clear();
+            }
+
             for (int i = 0; i < cells.Length; i++)
             {
                 //yield return delay;
                 //cells[i].Distance = cell.Coordinates.DistanceTo(cells[i].Coordinates);
                 cells[i].Distance = int.MaxValue;
+                // 清除所有高亮显示
                 cells[i].DisableHighlight();
             }
+            // 高亮起点和终点
+            fromCell.EnableHighlight(Color.blue);
+            toCell.EnableHighlight(Color.red);
             WaitForSeconds delay = new WaitForSeconds(1 / 60f);
             // Queue<HexagonCell> frontier = new Queue<HexagonCell>();
-            List<HexagonCell> frontier = new List<HexagonCell>();
-            cell.Distance = 0;
+            // List<HexagonCell> frontier = new List<HexagonCell>();
+            fromCell.Distance = 0;
             // frontier.Enqueue(cell);
-            frontier.Add(cell);
-            while (frontier.Count > 0)
+            // frontier.Add(fromCell);
+            this.searchFrontier.Enqueue(fromCell);
+            while (this.searchFrontier.Count > 0)
             {
                 yield return delay;
                 // HexagonCell current = frontier.Dequeue();
-                HexagonCell current = frontier[0];
-                frontier.RemoveAt(0);
+                // frontier.RemoveAt(0);
+                //HexagonCell current = frontier[0];
+                HexagonCell current = searchFrontier.Dequeue();
+                // 找到目标单元格时结束循环
+                if (current == toCell)
+                {
+                    current = current.PathFrom;
+                    while (current != fromCell)
+                    {
+                        current.EnableHighlight(Color.white);
+                        current = current.PathFrom;
+                    }
+                    break;
+                }
+
                 for (HexagonDirection d = HexagonDirection.NE; d <= HexagonDirection.NW; d++)
                 {
                     HexagonCell neighbor = current.GetNeighbor(d);
@@ -414,13 +457,18 @@ namespace HexagonMap
                     if (neighbor.Distance == int.MaxValue)
                     {
                         neighbor.Distance = distance;
-                        frontier.Add(neighbor);
+                        neighbor.PathFrom = current;
+                        neighbor.SearchHeuristic = neighbor.Coordinates.DistanceTo(toCell.Coordinates);
+                        // frontier.Add(neighbor);
+                        this.searchFrontier.Enqueue(neighbor);
                     }
                     else if (distance < neighbor.Distance)
                     {
                         neighbor.Distance = distance;
+                        neighbor.PathFrom = current;
                     }
-                    frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+                    // frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+                    // frontier.Sort((x, y) => x.SearchPriority.CompareTo(y.SearchPriority));
                 }
             }
 

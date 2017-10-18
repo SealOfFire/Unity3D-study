@@ -31,6 +31,29 @@ namespace HexagonMap
         public Color Color { get { return this.color; } set { this.color = value; } }
 
         /// <summary>
+        /// 路径上的下一个单元格位置
+        /// </summary>
+        public HexagonCell PathFrom { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int SearchHeuristic { get; set; }
+
+        public HexagonCell NextWithSamePriority { get; set; }
+
+        /// <summary>
+        /// 检索优先级
+        /// </summary>
+        public int SearchPriority
+        {
+            get
+            {
+                return this.distance + this.SearchHeuristic;
+            }
+        }
+
+        /// <summary>
         /// 距离
         /// </summary>
         private int distance;
