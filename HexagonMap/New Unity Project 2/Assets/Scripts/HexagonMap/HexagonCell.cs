@@ -74,17 +74,7 @@ namespace HexagonMap
             }
         }
 
-        // Use this for initialization
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
+        public int SearchPhase { get; set; }
 
         public void Initialize(HexagonGrid grid)
         {
@@ -154,6 +144,16 @@ namespace HexagonMap
             Image highlight = uiRect.GetChild(0).GetComponent<Image>();
             highlight.color = color;
             highlight.enabled = true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="text"></param>
+        public void SetLabel(string text)
+        {
+            Text label = uiRect.GetComponent<Text>();
+            label.text = text;
         }
     }
 }

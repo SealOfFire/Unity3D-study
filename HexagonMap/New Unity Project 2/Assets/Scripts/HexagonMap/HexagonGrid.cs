@@ -66,7 +66,7 @@ namespace HexagonMap
         /// <summary>
         /// 绘制网格地图的模型
         /// </summary>
-        private HexagonMesh hexMesh;
+        // private HexagonMesh hexMesh;
 
         #region 地图分块
 
@@ -109,6 +109,21 @@ namespace HexagonMap
         /// 路径检索优先级队列
         /// </summary>
         private HexagonCellPriorityQueue searchFrontier;
+
+        /// <summary>
+        /// 检索的路径是否存在
+        /// </summary>
+        private bool currentPathExists;
+
+        /// <summary>
+        /// 检索边界
+        /// </summary>
+        private int searchFrontierPhase;
+
+        /// <summary>
+        /// 查找路径的起始,终结单元格
+        /// </summary>
+        private HexagonCell currentPathFrom, currentPathTo;
 
         #endregion
 
@@ -366,10 +381,18 @@ namespace HexagonMap
         /// </summary>
         /// <param name="fromCell"></param>
         /// <param name="toCell"></param>
-        public void FindPath(HexagonCell fromCell, HexagonCell toCell)
+        public void FindPath(HexagonCell fromCell, HexagonCell toCell, int speed)
         {
-            StopAllCoroutines();
-            StartCoroutine(Search(fromCell, toCell));
+            // 测试寻路的时间花费
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            this.ClearPath(); // 清除上次的检索结果
+            this.currentPathFrom = fromCell;
+            this.currentPathTo = toCell;
+            this.currentPathExists = this.Search(fromCell, toCell, speed);
+            this.ShowPath(speed); // 高亮检索到的路径
+            sw.Stop();
+            Debug.Log(sw.ElapsedMilliseconds);
         }
 
         /// <summary>
@@ -377,8 +400,10 @@ namespace HexagonMap
         /// </summary>
         /// <param name="cell"></param>
         /// <returns></returns>
-        private IEnumerator Search(HexagonCell fromCell, HexagonCell toCell)
+        private bool Search(HexagonCell fromCell, HexagonCell toCell, int speed)
         {
+            this.searchFrontierPhase += 2;
+
             if (this.searchFrontier == null)
             {
                 this.searchFrontier = new HexagonCellPriorityQueue();
@@ -388,47 +413,54 @@ namespace HexagonMap
                 this.searchFrontier.Clear();
             }
 
-            for (int i = 0; i < cells.Length; i++)
-            {
-                //yield return delay;
-                //cells[i].Distance = cell.Coordinates.DistanceTo(cells[i].Coordinates);
-                cells[i].Distance = int.MaxValue;
-                // 清除所有高亮显示
-                cells[i].DisableHighlight();
-            }
-            // 高亮起点和终点
-            fromCell.EnableHighlight(Color.blue);
-            toCell.EnableHighlight(Color.red);
-            WaitForSeconds delay = new WaitForSeconds(1 / 60f);
-            // Queue<HexagonCell> frontier = new Queue<HexagonCell>();
-            // List<HexagonCell> frontier = new List<HexagonCell>();
+            #region 调试用的信息
+            //for (int i = 0; i < cells.Length; i++)
+            //{
+            //    // cells[i].Distance = int.MaxValue;
+            //    // 清除文本
+            //    cells[i].SetLabel(null);
+            //    // 清除所有高亮显示
+            //    cells[i].DisableHighlight();
+            //}
+            //// 高亮起点和终点
+            //fromCell.EnableHighlight(Color.blue);
+            #endregion
+
+            // toCell.EnableHighlight(Color.red);
+            fromCell.SearchPhase = searchFrontierPhase;
             fromCell.Distance = 0;
-            // frontier.Enqueue(cell);
-            // frontier.Add(fromCell);
             this.searchFrontier.Enqueue(fromCell);
             while (this.searchFrontier.Count > 0)
             {
-                yield return delay;
-                // HexagonCell current = frontier.Dequeue();
-                // frontier.RemoveAt(0);
-                //HexagonCell current = frontier[0];
+                // yield return delay;
                 HexagonCell current = searchFrontier.Dequeue();
+                current.SearchPhase += 1;
+
                 // 找到目标单元格时结束循环
                 if (current == toCell)
                 {
-                    current = current.PathFrom;
-                    while (current != fromCell)
-                    {
-                        current.EnableHighlight(Color.white);
-                        current = current.PathFrom;
-                    }
-                    break;
+                    #region 调试用的信息
+                    // current = current.PathFrom;
+                    //while (current != fromCell)
+                    //{
+                    //    int turn = current.Distance / speed;
+                    //    current.SetLabel(turn.ToString());
+                    //    current.EnableHighlight(Color.white);
+                    //    current = current.PathFrom;
+                    //}
+                    //toCell.EnableHighlight(Color.red);
+                    //break;
+                    #endregion
+                    return true;
                 }
 
+                // 计算移动到目的需要的回合数
+
+                int currentTurn = current.Distance / speed;
                 for (HexagonDirection d = HexagonDirection.NE; d <= HexagonDirection.NW; d++)
                 {
                     HexagonCell neighbor = current.GetNeighbor(d);
-                    if (neighbor == null)
+                    if (neighbor == null || neighbor.SearchPhase > searchFrontierPhase)
                     {
                         continue;
                     }
@@ -443,54 +475,96 @@ namespace HexagonMap
                     //    continue;
                     //}
                     // 沿着道路移动更快
-                    int distance = current.Distance;
+                    // int distance = current.Distance;
+                    // 根据移动成本计算
+                    int moveCost = 1;
                     //if (current.HasRoadThroughEdge(d))
                     //{
-                    //    distance += 1;
+                    //    moveCost = 1;
+                    //}
+                    //else if (current.Walled != neighbor.Walled)
+                    //{
+                    //    continue;
                     //}
                     //else
                     //{
-                    //    distance += 10;
+                    //    moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
+                    //    moveCost += neighbor.UrbanLevel + neighbor.FarmLevel +
+                    //    neighbor.PlantLevel;
                     //}
-                    distance += 1;
+                    int distance = current.Distance + moveCost;
+                    // distance += 1;
 
-                    if (neighbor.Distance == int.MaxValue)
+                    // 计算移动到目的需要的回合数
+                    int turn = distance / speed;
+                    if (turn > currentTurn)
                     {
+                        distance = turn * speed + moveCost;
+                    }
+
+
+                    //if (neighbor.Distance == int.MaxValue)
+                    if (neighbor.SearchPhase < this.searchFrontierPhase)
+                    {
+                        neighbor.SearchPhase = this.searchFrontierPhase;
                         neighbor.Distance = distance;
+                        // neighbor.SetLabel(turn.ToString());
                         neighbor.PathFrom = current;
                         neighbor.SearchHeuristic = neighbor.Coordinates.DistanceTo(toCell.Coordinates);
-                        // frontier.Add(neighbor);
                         this.searchFrontier.Enqueue(neighbor);
                     }
                     else if (distance < neighbor.Distance)
                     {
                         neighbor.Distance = distance;
+                        // neighbor.SetLabel(turn.ToString());
                         neighbor.PathFrom = current;
                     }
-                    // frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
-                    // frontier.Sort((x, y) => x.SearchPriority.CompareTo(y.SearchPriority));
                 }
             }
 
-            //for (int i = 0; i < cells.Length; i++)
-            //{
-            //    yield return delay;
-            //    this.cells[i].Distance =
-            //    cell.Coordinates.DistanceTo(cells[i].Coordinates);
-            //}
+            return false;
         }
 
-        ///// <summary>
-        ///// 根据坐标获取单元格
-        ///// </summary>
-        ///// <returns>The cell.</returns>
-        ///// <param name="x">The x coordinate.</param>
-        ///// <param name="y">The y coordinate.</param>
-        ///// <param name="z">The z coordinate.</param>
-        //public HexCell GetCell(int x, int y, int z)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
+        /// <summary>
+        /// 高亮路径
+        /// </summary>
+        /// <param name="speed"></param>
+        private void ShowPath(int speed)
+        {
+            if (currentPathExists)
+            {
+                HexagonCell current = this.currentPathTo;
+                while (current != currentPathFrom)
+                {
+                    int turn = current.Distance / speed;
+                    current.SetLabel(turn.ToString());
+                    current.EnableHighlight(Color.white);
+                    current = current.PathFrom;
+                }
+            }
+            currentPathFrom.EnableHighlight(Color.blue);
+            currentPathTo.EnableHighlight(Color.red);
+        }
+
+        /// <summary>
+        /// 清除路径
+        /// </summary>
+        private void ClearPath()
+        {
+            if (currentPathExists)
+            {
+                HexagonCell current = currentPathTo;
+                while (current != currentPathFrom)
+                {
+                    current.SetLabel(null);
+                    current.DisableHighlight();
+                    current = current.PathFrom;
+                }
+                current.DisableHighlight();
+                currentPathExists = false;
+            }
+            currentPathFrom = currentPathTo = null;
+        }
 
         #endregion
     }

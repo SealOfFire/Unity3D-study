@@ -27,7 +27,7 @@ namespace HexagonMap.UI
 
         void Awake()
         {
-            this.terrainMaterial.DisableKeyword("GRID_ON");
+            this.ShowGrid(true);
         }
 
         // Use this for initialization
@@ -43,6 +43,10 @@ namespace HexagonMap.UI
             {
                 HandleInput();
             }
+            else
+            {
+                previousCell = null;
+            }
         }
 
         /// <summary>
@@ -56,7 +60,7 @@ namespace HexagonMap.UI
             {
                 HexagonCell currentCell = hexagonGrid.GetCell(hit.point);
                 // this.hexGrid.TouchCell(hit.point);
-                if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
+                if (Input.GetKey(KeyCode.LeftShift) && this.searchToCell != currentCell)
                 {
                     // 清除旧的检索路径起点
                     if (this.searchFromCell)
@@ -68,14 +72,19 @@ namespace HexagonMap.UI
                     this.searchFromCell.EnableHighlight(Color.blue);
                     if (searchToCell)
                     {
-                        this.hexagonGrid.FindPath(this.searchFromCell, this.searchToCell);
+                        this.hexagonGrid.FindPath(this.searchFromCell, this.searchToCell, 24);
                     }
                 }
                 else if (searchFromCell && searchFromCell != currentCell)
                 {
-                    this.hexagonGrid.FindPath(searchFromCell, currentCell);
+                    searchToCell = currentCell;
+                    this.hexagonGrid.FindPath(searchFromCell, currentCell, 24);
                 }
-
+                previousCell = currentCell;
+            }
+            else
+            {
+                previousCell = null;
             }
         }
     }
