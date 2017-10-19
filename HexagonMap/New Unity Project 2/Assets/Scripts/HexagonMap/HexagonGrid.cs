@@ -384,15 +384,15 @@ namespace HexagonMap
         public void FindPath(HexagonCell fromCell, HexagonCell toCell, int speed)
         {
             // 测试寻路的时间花费
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
+            //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            //sw.Start();
             this.ClearPath(); // 清除上次的检索结果
             this.currentPathFrom = fromCell;
             this.currentPathTo = toCell;
             this.currentPathExists = this.Search(fromCell, toCell, speed);
             this.ShowPath(speed); // 高亮检索到的路径
-            sw.Stop();
-            Debug.Log(sw.ElapsedMilliseconds);
+            //sw.Stop();
+            //Debug.Log(sw.ElapsedMilliseconds);
         }
 
         /// <summary>
