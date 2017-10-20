@@ -36,7 +36,7 @@ namespace HexagonMap.UI
 
 		void Awake ()
 		{
-			this.ShowGrid (true);
+			this.ShowGrid (false);
 			this.SetEditMode (false);
 		}
 
