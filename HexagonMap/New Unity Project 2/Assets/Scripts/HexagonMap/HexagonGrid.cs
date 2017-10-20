@@ -162,6 +162,12 @@ namespace HexagonMap
 
 		public HexagonCell PrefabCell { get { return this.prefabCell; } set { this.prefabCell = value; } }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <value><c>true</c> if this instance has path; otherwise, <c>false</c>.</value>
+		public bool HasPath{ get { return this.currentPathExists; } }
+
 		#endregion
 
 		#region 方法
@@ -315,19 +321,6 @@ namespace HexagonMap
 
 		#region 处理点击
 
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="position"></param>
-		//void TouchCell(Vector3 position)
-		//{
-		//    // 点击的位置
-		//    position = transform.InverseTransformPoint(position);
-		//    // 点击的位置转换成网格坐标
-		//    HexagonCoordinates coordinates = HexagonCoordinates.FromPosition(position, this);
-		//    Debug.Log("touched at " + coordinates);
-		//}
-
 		/// <summary>
 		/// 获取点击位置的单元格
 		/// </summary>
@@ -345,22 +338,21 @@ namespace HexagonMap
 			// return null;
 		}
 
+		/// <summary>
+		/// 判断拾取射线是否选中单元格
+		/// </summary>
+		/// <returns>The cell.</returns>
+		/// <param name="ray">Ray.</param>
+		public HexagonCell GetCell (Ray ray)
+		{
+			RaycastHit hit;
+			if (Physics.Raycast (ray, out hit)) {
+				return GetCell (hit.point);
+			}
+			return null;
+		}
+
 		#endregion
-
-		///// <summary>
-		///// 地图上每个单元格到指定单元格的距离
-		///// </summary>
-		///// <param name="cell"></param>
-		//public void FindDistancesTo(HexagonCell cell)
-		//{
-		//    this.StopAllCoroutines();
-		//    this.StartCoroutine(Search(cell));
-
-		//    //for (int i = 0; i < cells.Length; i++)
-		//    //{
-		//    //    this.cells[i].Distance = cell.Coordinates.DistanceTo(cells[i].Coordinates);
-		//    //}
-		//}
 
 		/// <summary>
 		/// 查找两个单元格之间的路径
@@ -396,19 +388,6 @@ namespace HexagonMap
 				this.searchFrontier.Clear ();
 			}
 
-			#region 调试用的信息
-			//for (int i = 0; i < cells.Length; i++)
-			//{
-			//    // cells[i].Distance = int.MaxValue;
-			//    // 清除文本
-			//    cells[i].SetLabel(null);
-			//    // 清除所有高亮显示
-			//    cells[i].DisableHighlight();
-			//}
-			//// 高亮起点和终点
-			//fromCell.EnableHighlight(Color.blue);
-			#endregion
-
 			// toCell.EnableHighlight(Color.red);
 			fromCell.SearchPhase = searchFrontierPhase;
 			fromCell.Distance = 0;
@@ -420,18 +399,6 @@ namespace HexagonMap
 
 				// 找到目标单元格时结束循环
 				if (current == toCell) {
-					#region 调试用的信息
-					// current = current.PathFrom;
-					//while (current != fromCell)
-					//{
-					//    int turn = current.Distance / speed;
-					//    current.SetLabel(turn.ToString());
-					//    current.EnableHighlight(Color.white);
-					//    current = current.PathFrom;
-					//}
-					//toCell.EnableHighlight(Color.red);
-					//break;
-					#endregion
 					return true;
 				}
 
@@ -441,6 +408,10 @@ namespace HexagonMap
 				for (HexagonDirection d = HexagonDirection.NE; d <= HexagonDirection.NW; d++) {
 					HexagonCell neighbor = current.GetNeighbor (d);
 					if (neighbor == null || neighbor.SearchPhase > searchFrontierPhase) {
+						continue;
+					}
+					if (neighbor.Unit) {
+						//  单元格中有单位的时候跳过这个单元格
 						continue;
 					}
 					// 避开有水的地方
@@ -522,7 +493,7 @@ namespace HexagonMap
 		/// <summary>
 		/// 清除路径
 		/// </summary>
-		private void ClearPath ()
+		public void ClearPath ()
 		{
 			if (currentPathExists) {
 				HexagonCell current = currentPathTo;

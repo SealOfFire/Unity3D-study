@@ -151,6 +151,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 114331219223705712, guid: 2afe53a28ae07334f9ec3f430ad3599d,
+        type: 2}
+      propertyPath: hexagonGrid
+      value: 
+      objectReference: {fileID: 1314922754}
     - target: {fileID: 224332451649878500, guid: 2afe53a28ae07334f9ec3f430ad3599d,
         type: 2}
       propertyPath: m_LocalPosition.x
@@ -161,7 +166,7 @@ Prefab:
       propertyPath: m_LocalPosition.y
       value: 214
       objectReference: {fileID: 0}
-    - target: {fileID: 114331219223705712, guid: 2afe53a28ae07334f9ec3f430ad3599d,
+    - target: {fileID: 114809574330792196, guid: 2afe53a28ae07334f9ec3f430ad3599d,
         type: 2}
       propertyPath: hexagonGrid
       value: 

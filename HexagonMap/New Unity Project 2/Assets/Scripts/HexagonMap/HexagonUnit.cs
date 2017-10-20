@@ -27,6 +27,9 @@ namespace HexagonMap
 				return this.location;
 			}
 			set { 
+				if (this.location) {
+					this.location.Unit = null;
+				}
 				this.location = value;
 				value.Unit = this;
 				this.transform.localPosition = value.Position;
@@ -55,10 +58,23 @@ namespace HexagonMap
 		/// <summary>
 		/// 移除单位
 		/// </summary>
-		public void Die()
+		public void Die ()
 		{
 			this.location.Unit = null;
 			Destroy (this.gameObject);
+		}
+
+		/// <summary>
+		/// 目的地单元格是否可以进入
+		/// </summary>
+		/// <returns><c>true</c> if this instance is valid destination the specified cell; otherwise, <c>false</c>.</returns>
+		/// <param name="cell">Cell.</param>
+		public bool IsValidDestination (HexagonCell cell)
+		{
+			// 目标单元格不在水底
+			// return !cell.IsUnderwater;
+			// 目标单元格内没有其他单位
+			return !cell.Unit;
 		}
 	}
 }

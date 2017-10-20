@@ -8,7 +8,8 @@ namespace HexagonMap.UI
 		public HexagonGrid hexagonGrid;
 		public Material terrainMaterial;
 		// private Color activeColor;
-		private HexagonCell previousCell, searchToCell, searchFromCell;
+		// private HexagonCell previousCell, searchToCell, searchFromCell;
+		private HexagonCell previousCell;
 
 		/// <summary>
 		/// 单位预设体
@@ -28,9 +29,15 @@ namespace HexagonMap.UI
 			}
 		}
 
+		public void SetEditMode (bool toggle)
+		{
+			this.enabled = toggle;
+		}
+
 		void Awake ()
 		{
 			this.ShowGrid (true);
+			this.SetEditMode (false);
 		}
 
 		// Use this for initialization
@@ -68,22 +75,12 @@ namespace HexagonMap.UI
 		{
 			HexagonCell currentCell = this.GetCellUnderCursor ();
 			if (currentCell) {
-				// this.hexGrid.TouchCell(hit.point);
-				if (Input.GetKey (KeyCode.LeftShift) && this.searchToCell != currentCell) {
-					// 清除旧的检索路径起点
-					if (this.searchFromCell) {
-						this.searchFromCell.DisableHighlight ();
-					}
-					// 当前选中的单元格设置为新的检索起点
-					this.searchFromCell = currentCell;
-					this.searchFromCell.EnableHighlight (Color.blue);
-					if (searchToCell) {
-						this.hexagonGrid.FindPath (this.searchFromCell, this.searchToCell, 24);
-					}
-				} else if (searchFromCell && searchFromCell != currentCell) {
-					searchToCell = currentCell;
-					this.hexagonGrid.FindPath (searchFromCell, currentCell, 24);
+				if (this.previousCell && previousCell != currentCell) {
+					// 检测拖拽
+				} else {
+					//  没有拖拽
 				}
+				// EditCells (currentCell);
 				previousCell = currentCell;
 			} else {
 				previousCell = null;
@@ -96,12 +93,7 @@ namespace HexagonMap.UI
 		/// <returns>The cell under cursor.</returns>
 		private HexagonCell GetCellUnderCursor ()
 		{
-			Ray inputRay = Camera.main.ScreenPointToRay (Input.mousePosition);
-			RaycastHit hit;
-			if (Physics.Raycast (inputRay, out hit)) {
-				return this.hexagonGrid.GetCell (hit.point);
-			}
-			return null;
+			return this.hexagonGrid.GetCell (Camera.main.ScreenPointToRay (Input.mousePosition));
 		}
 
 		/// <summary>

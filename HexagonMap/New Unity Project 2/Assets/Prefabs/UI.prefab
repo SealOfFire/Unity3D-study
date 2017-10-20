@@ -45,6 +45,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1835053228857220
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4618812307249726}
+  - component: {fileID: 114809574330792196}
+  m_Layer: 0
+  m_Name: Hexgon Game UI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &4482435446013230
 Transform:
   m_ObjectHideFlags: 1
@@ -56,8 +72,22 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224332451649878500}
+  - {fileID: 4618812307249726}
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4618812307249726
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1835053228857220}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.7134258, y: 0.35895365, z: -0.037956856}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4482435446013230}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114203597275736348
 MonoBehaviour:
@@ -86,8 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ed509e8552b0774dbc9b37ca626dfa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexagonGrid: {fileID: 114286651745000812, guid: 4b2b0d9cde874804781a6125e090fe55,
-    type: 2}
+  hexagonGrid: {fileID: 0}
   terrainMaterial: {fileID: 2100000, guid: 4ec1d7cbc5c71c64aa42b215ad3208cb, type: 2}
   unitPrefab: {fileID: 114071272715228066, guid: a376bfaf67ad13b42821948925f39b9f,
     type: 2}
@@ -112,6 +141,19 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+--- !u!114 &114809574330792196
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1835053228857220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe8665f08aed2eb4a928830edf453d41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hexagonGrid: {fileID: 114286651745000812, guid: 4b2b0d9cde874804781a6125e090fe55,
+    type: 2}
 --- !u!223 &223167588993469096
 Canvas:
   m_ObjectHideFlags: 1
