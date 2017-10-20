@@ -1,14 +1,11 @@
 fileFormatVersion: 2
-guid: 0ed509e8552b0774dbc9b37ca626dfa3
-timeCreated: 1508467298
+guid: 9a03f49b83dcb4b4ca5570af6096183b
+timeCreated: 1508466921
 licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - hexagonGrid: {instanceID: 0}
-  - terrainMaterial: {instanceID: 0}
-  - unitPrefab: {instanceID: 0}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

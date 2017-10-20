@@ -89,6 +89,8 @@ MonoBehaviour:
   hexagonGrid: {fileID: 114286651745000812, guid: 4b2b0d9cde874804781a6125e090fe55,
     type: 2}
   terrainMaterial: {fileID: 2100000, guid: 4ec1d7cbc5c71c64aa42b215ad3208cb, type: 2}
+  unitPrefab: {fileID: 114071272715228066, guid: a376bfaf67ad13b42821948925f39b9f,
+    type: 2}
 --- !u!114 &114514691692518456
 MonoBehaviour:
   m_ObjectHideFlags: 1
