@@ -104,7 +104,8 @@ namespace HexagonMap.UI
 		private void DoMove ()
 		{
 			if (this.hexagonGrid) {
-				this.selectedUnit.Location = currentCell;
+				// this.selectedUnit.Location = currentCell;
+				this.selectedUnit.Travel (this.hexagonGrid.GetPath ());
 				this.hexagonGrid.ClearPath ();
 			}
 		}

@@ -404,7 +404,7 @@ namespace HexagonMap
 
 				// 计算移动到目的需要的回合数
 
-				int currentTurn = current.Distance / speed;
+				int currentTurn = (current.Distance - 1) / speed;
 				for (HexagonDirection d = HexagonDirection.NE; d <= HexagonDirection.NW; d++) {
 					HexagonCell neighbor = current.GetNeighbor (d);
 					if (neighbor == null || neighbor.SearchPhase > searchFrontierPhase) {
@@ -446,7 +446,7 @@ namespace HexagonMap
 					// distance += 1;
 
 					// 计算移动到目的需要的回合数
-					int turn = distance / speed;
+					int turn = (distance - 1) / speed;
 					if (turn > currentTurn) {
 						distance = turn * speed + moveCost;
 					}
@@ -480,7 +480,7 @@ namespace HexagonMap
 			if (currentPathExists) {
 				HexagonCell current = this.currentPathTo;
 				while (current != currentPathFrom) {
-					int turn = current.Distance / speed;
+					int turn = (current.Distance - 1) / speed;
 					current.SetLabel (turn.ToString ());
 					current.EnableHighlight (Color.white);
 					current = current.PathFrom;
@@ -506,6 +506,26 @@ namespace HexagonMap
 				currentPathExists = false;
 			}
 			currentPathFrom = currentPathTo = null;
+		}
+
+		/// <summary>
+		/// 获取路径经过的单元格
+		/// </summary>
+		/// <returns>The path.</returns>
+		public List<HexagonCell> GetPath ()
+		{
+			if (!this.currentPathExists) {
+				return null;
+			}
+			List<HexagonCell> path = ListPool<HexagonCell>.Get ();
+			for (HexagonCell c = this.currentPathTo; c != this.currentPathFrom; c = c.PathFrom) {
+				path.Add (c);
+			}
+			// 从终点到起点
+			path.Add (this.currentPathFrom);
+			// 反转
+			path.Reverse ();
+			return path;
 		}
 
 		#region 单位处理方法
