@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace HexagonMap.UI
 {
-	public class HexagonGameUI : MonoBehaviour
+    public class HexagonGameUI : MonoBehaviour
 	{
 		/// <summary>
 		/// 地图
